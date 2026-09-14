@@ -196,19 +196,23 @@ I started with dest and mem, just length prefixed writes and a conn that sends o
 
 ## Where this maps in React core
 
-FiZz implements the same protocol as React 19.2. If you want to read the source that inspired each part, open these exact files in `facebook/react` at main. Every link is direct to GitHub.
+FiZz implements the same protocol as React 19.2. If you want to trace the idea to the source, start here in [`facebook/react`](https://github.com/facebook/react) at main tag `19.2`.
 
-| FiZz idea | React file | What to read there |
-| --- | --- | --- |
-| Request, Task, Segment, boundary lifecycle, absorb versus reveal, writeCompletedBoundaryInstruction | [`packages/react-server/src/ReactFizzServer.js`](https://github.com/facebook/react/blob/main/packages/react-server/src/ReactFizzServer.js) | `createRequest`, `renderNode`, `Task` and `Segment` types, `writeCompletedBoundaryInstruction` and `writeCompletedSegmentInstruction`, `parentFlushed` branch in `completeBound` |
-| Node streaming entry | [`packages/react-dom/src/server/ReactDOMFizzServerNode.js`](https://github.com/facebook/react/blob/main/packages/react-dom/src/server/ReactDOMFizzServerNode.js) | `renderToPipeableStream` that wraps `createRequest` with Node destination |
-| Browser and Edge entries | [`packages/react-dom/src/server/ReactDOMFizzServerBrowser.js`](https://github.com/facebook/react/blob/main/packages/react-dom/src/server/ReactDOMFizzServerBrowser.js), [`packages/react-dom/src/server/ReactDOMFizzServerEdge.js`](https://github.com/facebook/react/blob/main/packages/react-dom/src/server/ReactDOMFizzServerEdge.js) | `renderToReadableStream` variants of the same core |
-| Flight push, J and E tags, refs, abort and flowing | [`packages/react-server/src/ReactFlightServer.js`](https://github.com/facebook/react/blob/main/packages/react-server/src/ReactFlightServer.js) | `createRequest`, `startWork`, `startFlowing`, `stopFlowing`, `abort`, tag emit for `J` and `E` and ref handling for `$` and `$@` |
-| HTML format, placeholders, segment start and end, suspense markers | [`packages/react-server/src/ReactFizzConfigDOM.js`](https://github.com/facebook/react/blob/main/packages/react-server/src/ReactFizzConfigDOM.js) and [`packages/react-dom-bindings/src/server/ReactFizzConfigDOM.js`](https://github.com/facebook/react/blob/main/packages/react-dom-bindings/src/server/ReactFizzConfigDOM.js) | `pushStartInstance`, `pushEndInstance`, `pushTextInstance`, `writePlaceholder`, `writeStartSegment`, `writeEndSegment`, comment markers `<!--$-->`, `<!--$?-->`, `<!--$!-->`, `<!--/$-->` |
-| Stream plumbing, chunk types, schedule | [`packages/react-server/src/ReactServerStreamConfigNode.js`](https://github.com/facebook/react/blob/main/packages/react-server/src/ReactServerStreamConfigNode.js), [`ReactServerStreamConfigBrowser.js`](https://github.com/facebook/react/blob/main/packages/react-server/src/ReactServerStreamConfigBrowser.js), [`ReactServerStreamConfigEdge.js`](https://github.com/facebook/react/blob/main/packages/react-server/src/ReactServerStreamConfigEdge.js), [`ReactServerStreamConfigBun.js`](https://github.com/facebook/react/blob/main/packages/react-server/src/ReactServerStreamConfigBun.js) | chunk type and destination write and `scheduleWork` and `scheduleMicrotask` |
-| Client Flight and hydration, $RC walk, $RX paint, pending slots | [`packages/react-client/src/ReactFlightClient.js`](https://github.com/facebook/react/blob/main/packages/react-client/src/ReactFlightClient.js) and `ReactDOMClient` hydration | client `__F.get` pending slots, `console.error` on dup, `__F.end` check, `$RC` DOM walk and `$RX` error paint |
+* [The core streaming engine](https://github.com/facebook/react/blob/main/packages/react-server/src/ReactFizzServer.js) This is the heart. It owns the request, the tasks, the segments, and the boundary lifecycle. It decides absorb versus reveal and emits the `$RC` instructions that the client splices. Study `createRequest` and `renderNode` and the `parentFlushed` branch and you have half the spec.
 
-Read those alongside `SPEC.md` in this repo. The spec is the distilled version of exactly those files. When in doubt, the React file is the truth. Start with [`ReactFizzServer.js`](https://github.com/facebook/react/blob/main/packages/react-server/src/ReactFizzServer.js) then [`ReactFlightServer.js`](https://github.com/facebook/react/blob/main/packages/react-server/src/ReactFlightServer.js) then the two `ReactFizzConfigDOM` files, that path mirrors the build order of this repo. Browse at [`github.com/facebook/react`](https://github.com/facebook/react) main branch tag `19.2`.
+* [The Node streaming entry](https://github.com/facebook/react/blob/main/packages/react-dom/src/server/ReactDOMFizzServerNode.js) The `renderToPipeableStream` wrapper that connects the core engine to a Node destination. Same engine, just a different pipe.
+
+* [The Browser and Edge entries](https://github.com/facebook/react/blob/main/packages/react-dom/src/server/ReactDOMFizzServerBrowser.js) The `renderToReadableStream` variants for browser and edge. Identical protocol, different host.
+
+* [The Flight protocol](https://github.com/facebook/react/blob/main/packages/react-server/src/ReactFlightServer.js) The other half. It defines `J` and `E` tags, refs `$` and `$@`, flowing, and abort. `createRequest`, `startWork`, `startFlowing`, `abort`, and the tag emit live here.
+
+* [HTML formatting and placeholders](https://github.com/facebook/react/blob/main/packages/react-server/src/ReactFizzConfigDOM.js) How HTML gets shaped, how placeholders and segment shells are written, and where the suspense markers `<!--$-->`, `<!--$?-->`, `<!--$!-->`, `<!--/$-->` come from. Companion is the [DOM bindings format config](https://github.com/facebook/react/blob/main/packages/react-dom-bindings/src/server/ReactFizzConfigDOM.js).
+
+* [Stream configs for every host](https://github.com/facebook/react/blob/main/packages/react-server/src/ReactServerStreamConfigNode.js) Node, browser, edge, and Bun each have a config that defines chunk types, destination writes, and work scheduling. Node is the clearest to read first, the others mirror it.
+
+* [The client that splices it back](https://github.com/facebook/react/blob/main/packages/react-client/src/ReactFlightClient.js) The Flight client and ReactDOM hydration path. This is where `__F.get` pending slots, `console.error` on dup, `__F.end` checks, and the `$RC` DOM walk and `$RX` error paint live.
+
+Read them alongside `SPEC.md` in this repo. The spec is the distilled version of exactly those pages. When in doubt, the React page is the truth. Start with the core engine, then Flight, then the HTML formatting. That order mirrors how this repo was built.
 
 ---
 
