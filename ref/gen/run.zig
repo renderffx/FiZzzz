@@ -48,9 +48,14 @@ pub fn teardown(c: *Ctx) void {
     c.alloc.destroy(c.req);
 }
 
-pub fn runCase(alloc: std.mem.Allocator, n: u32, order: []const fam.FamTerm, fails: []const u32, abort_at: usize, max_write: usize) !struct { evs: []parse_wire.Ev, wire: []u8 } {
+pub const WireRes = struct { evs: []parse_wire.Ev, wire: []u8 };
+pub fn runCase(alloc: std.mem.Allocator, n: u32, order: []const fam.FamTerm, fails: []const u32, abort_at: usize, max_write: usize) !WireRes {
+    return runCaseWithLegs(alloc, n, order, fails, &[_]u32{ 2, 3 }, abort_at, max_write);
+}
+
+pub fn runCaseWithLegs(alloc: std.mem.Allocator, n: u32, order: []const fam.FamTerm, fails: []const u32, legs_rows: []const u32, abort_at: usize, max_write: usize) !WireRes {
     var dest = Dest.ofMem(alloc, max_write, 0);
-    var ctx = try setup(alloc, &dest, n, &[_]u32{ 2, 3 });
+    var ctx = try setup(alloc, &dest, n, legs_rows);
     var idx: usize = 0;
     if (order.len > 0 and order[0].kind == 2) {
         const lb = ctx.legs.get(order[0].row).?;

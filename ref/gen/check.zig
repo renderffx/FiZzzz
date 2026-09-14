@@ -4,10 +4,7 @@ const parse_wire = @import("parse_wire");
 const fam = @import("./fam.zig");
 const run = @import("./run.zig");
 
-pub fn checkCase(alloc: std.mem.Allocator, n: u32, order: []const fam.FamTerm, fails: []const u32, abort_at: usize, max_write: usize) !?[]u8 {
-    const r = try run.runCase(alloc, n, order, fails, abort_at, max_write);
-    defer alloc.free(r.wire);
-    defer alloc.free(r.evs);
+fn check(alloc: std.mem.Allocator, r: run.WireRes, order: []const fam.FamTerm, fails: []const u32, n: u32, abort_at: usize, max_write: usize) !?[]u8 {
     var oterms = std.ArrayList(oracle.Term).init(alloc);
     defer oterms.deinit();
     for (order) |t| {
@@ -29,21 +26,23 @@ pub fn checkCase(alloc: std.mem.Allocator, n: u32, order: []const fam.FamTerm, f
     for (r.evs) |e| {
         if (e.kind == 0) got_rc += 1 else got_rx += 1;
     }
-    if (parse_wire.hasRcAfterRx(r.evs)) {
-        return try std.fmt.allocPrint(alloc, "RC-after-RX n={d} abort={d} mw={d}", .{ n, abort_at, max_write });
-    }
-    if (got_rc != want_rc or got_rx != want_rx) {
-        var ob = std.ArrayList(u8).init(alloc);
-        defer ob.deinit();
-        for (order, 0..) |t, idx| {
-            var eb: [48]u8 = undefined;
-            const es = std.fmt.bufPrint(&eb, "({d},{d})", .{ t.kind, t.row }) catch "?";
-            ob.appendSlice(es) catch {};
-            if (idx + 1 < order.len) ob.appendSlice(" ") catch {};
-        }
-        return try std.fmt.allocPrint(alloc, "count mismatch n={d} abort={d} mw={d} want RC={d} RX={d} got RC={d} RX={d} order=[{s}] evs={d}", .{ n, abort_at, max_write, want_rc, want_rx, got_rc, got_rx, ob.items, r.evs.len });
-    }
+    if (parse_wire.hasRcAfterRx(r.evs)) return try std.fmt.allocPrint(alloc, "RC-after-RX n={d} abort={d} mw={d}", .{ n, abort_at, max_write });
+    if (got_rc != want_rc or got_rx != want_rx) return try std.fmt.allocPrint(alloc, "count mismatch n={d} abort={d} mw={d} want RC={d} RX={d} got RC={d} RX={d}", .{ n, abort_at, max_write, want_rc, want_rx, got_rc, got_rx });
     return null;
+}
+
+pub fn checkCaseWithLegs(alloc: std.mem.Allocator, n: u32, order: []const fam.FamTerm, fails: []const u32, legs: []const u32, abort_at: usize, max_write: usize) !?[]u8 {
+    const r = try run.runCaseWithLegs(alloc, n, order, fails, legs, abort_at, max_write);
+    defer alloc.free(r.wire);
+    defer alloc.free(r.evs);
+    return check(alloc, r, order, fails, n, abort_at, max_write);
+}
+
+pub fn checkCase(alloc: std.mem.Allocator, n: u32, order: []const fam.FamTerm, fails: []const u32, abort_at: usize, max_write: usize) !?[]u8 {
+    const r = try run.runCase(alloc, n, order, fails, abort_at, max_write);
+    defer alloc.free(r.wire);
+    defer alloc.free(r.evs);
+    return check(alloc, r, order, fails, n, abort_at, max_write);
 }
 
 pub fn permute(alloc: std.mem.Allocator, items: []fam.FamTerm, k: usize, n: u32, fails: []const u32, abort_at: usize, mw: usize) !?[]u8 {
