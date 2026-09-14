@@ -158,30 +158,6 @@ There is also a prove harness that renders the same trees in real React 19.2 `re
 
 ---
 
-## Quick start
-
-Prerequisites: Zig 0.13 or later, Node 20 for the React prove harness.
-
-```bash
-zig build run
-# open http://127.0.0.1:8787
-
-# abort variant
-# open http://127.0.0.1:8787/abort?after=11
-
-zig build test
-
-# fuzz for counterexamples
-zig build gen
-
-# print the raw wire
-zig build dump
-```
-
-Client entry is `boot.js`. Server entry is `main.zig`. Build is `build.zig`.
-
----
-
 ## Design choices
 
 **Why Zig** Bytes should be bytes. No GC pause in the middle of a chunk, no hidden allocation. If you duplicate or free wrong it blows up right there. JS keeps the DOM walk, Zig keeps the bytes. Separate programs, same shape. When they match, you trust it.
@@ -200,6 +176,6 @@ Client entry is `boot.js`. Server entry is `main.zig`. Build is `build.zig`.
 
 ## Project
 
-FiZz by renderffx. Spec is `SPEC.md`. Agent brief is `AGENT.md`. Verify script is `verify.ps1`.
+FiZz by renderffx.
 
 If you change FiZz to make `/` look nicer and the oracle disagrees, revert the nice and fix the rule.
