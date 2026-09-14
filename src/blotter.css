@@ -1,0 +1,16 @@
+:root { color-scheme: light only; --bg: #ffffff; --fg: #111111; --line: #111111; --head: #f2f2f2; --zebra: #f7f7f7; --skel-a: #e2e2e2; --skel-b: #c6c6c6; --cap: #111111; --errbg: #fff5f5; --errfg: #7a0000; --errb: #b00000; --badge-bg: #ffffff; --badge-fg: #111111; }
+body { font-family: monospace; background: #ffffff; color: #111111; margin: 0; }
+table { border-collapse: collapse; width: 100%; background: #ffffff; }
+td, th { border: 1px solid #111111; padding: 4px 8px; text-align: left; color: #111111; }
+thead th { background: #f2f2f2; color: #111111; }
+tbody tr:nth-child(even) { background: #f7f7f7; }
+.skel { display: inline-block; min-width: 8em; height: 1em; border: 1px solid #111111;
+  background: repeating-linear-gradient(45deg, #ffffff, #ffffff 4px, #e2e2e2 4px, #e2e2e2 8px); }
+.legs { display: inline-block; margin-left: 6px; padding: 0 6px; border: 1px solid #111111; border-radius: 0; background: #ffffff; color: #111111; font-size: 0.9em; }
+.err { background: #fff5f5; color: #7a0000; outline: 2px solid #b00000; }
+.err b { color: #7a0000; }
+.err-row td { background: #fff5f5; box-shadow: inset 0 0 0 2px #b00000; }
+caption { text-align: left; padding: 8px; color: #111111; }
+a { color: #0b3dcc; }
+h1, p { margin: 8px; color: #111111; }
+nav, .nav { margin: 8px; }
