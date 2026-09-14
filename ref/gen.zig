@@ -88,5 +88,18 @@ pub fn main() !void {
             }
         }
     }
+    {
+        const ppr = @import("./gen/ppr.zig");
+        const r = try ppr.pprCase(alloc);
+        defer alloc.free(r.evs);
+        if (r.shell_dup) {
+            std.debug.print("COUNTEREXAMPLE ppr shell dup\n", .{});
+            std.process.exit(1);
+        }
+        if (@import("parse_wire").hasRcAfterRx(r.evs)) {
+            std.debug.print("COUNTEREXAMPLE ppr RC-after-RX\n", .{});
+            std.process.exit(1);
+        }
+    }
     std.debug.print("NO COUNTEREXAMPLE\n", .{});
 }
