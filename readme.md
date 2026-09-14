@@ -169,7 +169,7 @@ Read them alongside `SPEC.md` in this repo. The spec is the distilled version of
 
 ## Out of scope
 
-`$RS`, time batched reveals, `progressiveChunkSize`, preamble suspense, Flight `I` `H` `T` `R`, hydration, PPR resume, Server Actions, Fiber. FiZz v1 is React OOO iff absorb, reveal, error, table wrap, escape, and abort hold.
+`$RS`, time batched reveals, `progressiveChunkSize`, preamble suspense, Flight `I` `H` `T` `R`, hydration, PPR resume, Server Actions, Fiber. FiZz v1 is React OOO iff absorb, reveal, error, table wrap, escape, and abort hold on a `<table>`.
 
 ---
 

@@ -1,4 +1,4 @@
-# OOO Desk — SPEC (v1)
+# FiZz — SPEC (v1)
 
 React-19.2-shaped OOO streaming. One chunked HTML document. No Fiber, no Next, no useState.
 `_F.push("…")`. Tags: `J` model, `E` error. Refs: `$hex`, `$@hex`.
@@ -72,4 +72,4 @@ Blotter tape (must hold):
 
 `$RS`, reveal time-batching, `progressiveChunkSize`, preamble Suspense,
 Flight `I H T R`, hydration, PPR resume, Server Actions, Fiber.
-v1 is React OOO iff F2/F3/F5/F6/F8/F9 hold on a `<table>`.
+v1 is React OOO iff absorb, reveal, error, table wrap, escape, and abort hold on a `<table>`.

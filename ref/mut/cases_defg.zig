@@ -7,7 +7,7 @@ const wires = @import("./wires.zig");
 
 pub fn m4(alloc: std.mem.Allocator) bool {
     _ = alloc;
-    var f = std.fs.cwd().openFile("src/boot.js", .{}) catch std.fs.cwd().openFile("ooo-desk/src/boot.js", .{}) catch return false;
+    var f = std.fs.cwd().openFile("src/boot.js", .{}) catch return false;
     defer f.close();
     var buf: [1 << 16]u8 = undefined;
     const n = f.readAll(&buf) catch return false;

@@ -1,4 +1,4 @@
-$p = Start-Process -FilePath '.\zig-out\bin\ooo-desk.exe' -PassThru
+$p = Start-Process -FilePath '.\zig-out\bin\fizz.exe' -PassThru
 $spid = $p.Id
 Write-Output ("STARTED:" + $spid)
 Start-Sleep -Seconds 3

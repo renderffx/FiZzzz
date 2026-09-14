@@ -1,4 +1,4 @@
-# OOO Desk — agent brief (this file)
+# FiZz — agent brief (this file)
 
 Build a protocol, not a dashboard. React 19.2 Fizz + sliver of Flight.
 One chunked HTML document. No Fiber, no Next, no useState.

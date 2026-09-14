@@ -28,7 +28,7 @@ pub const Scene = struct {
             try r0.appendSlice("</style></head><body>");
             try r0.appendSlice(@embedFile("../shared/nav.html"));
             try r0.appendSlice(@embedFile("../shared/glossary.html"));
-            try r0.appendSlice("<table><caption>ooo-desk blotter</caption>");
+            try r0.appendSlice("<table><caption>FiZz blotter</caption>");
             try r0.appendSlice("<thead><tr><th>row</th><th>sym</th><th>px</th><th>note</th></tr></thead><tbody>");
         }
 

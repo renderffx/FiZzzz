@@ -54,7 +54,7 @@ pub fn build(b: *std.Build) void {
     main_mod.addImport("router", router_mod);
 
     const exe = b.addExecutable(.{
-        .name = "ooo-desk",
+        .name = "fizz",
         .root_module = main_mod,
     });
     b.installArtifact(exe);
