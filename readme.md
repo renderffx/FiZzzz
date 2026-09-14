@@ -157,7 +157,7 @@ FiZz speaks the same protocol as React 19.2. If you want to trace the idea to th
 
 * [The Flight protocol](https://github.com/facebook/react/blob/main/packages/react-server/src/ReactFlightServer.js) The other half. It defines `J` and `E` tags, refs `$` and `$@`, flowing, and abort. `createRequest`, `startWork`, `startFlowing`, `abort`, and the tag emit live here.
 
-* [HTML formatting and placeholders](https://github.com/facebook/react/blob/main/packages/react-server/src/ReactFizzConfigDOM.js) How HTML gets shaped, how placeholders and segment shells are written, and where the suspense markers `<!--$-->`, `<!--$?-->`, `<!--$!-->`, `<!--/$-->` come from. Companion is the [DOM bindings format config](https://github.com/facebook/react/blob/main/packages/react-dom-bindings/src/server/ReactFizzConfigDOM.js).
+* [HTML formatting and placeholders](https://github.com/facebook/react/blob/main/packages/react-server/src/ReactFizzConfig.js) How HTML gets shaped, how placeholders and segment shells are written, and where the suspense markers `<!--$-->`, `<!--$?-->`, `<!--$!-->`, `<!--/$-->` come from. Companion is the [DOM bindings format config](https://github.com/facebook/react/blob/main/packages/react-dom-bindings/src/server/ReactFizzConfigDOM.js).
 
 * [Stream configs for every host](https://github.com/facebook/react/blob/main/packages/react-server/src/ReactServerStreamConfigNode.js) Node, browser, edge, and Bun each have a config that defines chunk types, destination writes, and work scheduling. Node is the clearest to read first, the others mirror it.
 
