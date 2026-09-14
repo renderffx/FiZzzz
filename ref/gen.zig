@@ -60,5 +60,33 @@ pub fn main() !void {
             terms.deinit();
         }
     }
+    {
+        const seed: u64 = 0x7654321;
+        var prng = std.Random.DefaultPrng.init(seed);
+        const R = prng.random();
+        var pi: usize = 0;
+        while (pi < 300) : (pi += 1) {
+            var terms = std.ArrayList(fam.FamTerm).init(alloc);
+            defer terms.deinit();
+            var r: u32 = 1;
+            while (r <= 30) : (r += 1) try terms.append(.{ .kind = 0, .row = r });
+            try terms.append(.{ .kind = 2, .row = 14 });
+            try terms.append(.{ .kind = 2, .row = 28 });
+            var i = terms.items.len;
+            while (i > 1) {
+                i -= 1;
+                const j = R.intRangeAtMost(usize, 0, i);
+                const t = terms.items[i];
+                terms.items[i] = terms.items[j];
+                terms.items[j] = t;
+            }
+            const fails = [_]u32{ 7, 19 };
+            const legs = [_]u32{ 14, 28 };
+            if (try check.checkCaseWithLegs(alloc, 30, terms.items, &fails, &legs, 11, 1)) |ce| {
+                std.debug.print("COUNTEREXAMPLE blotter-hard: {s}\n", .{ce});
+                std.process.exit(1);
+            }
+        }
+    }
     std.debug.print("NO COUNTEREXAMPLE\n", .{});
 }
