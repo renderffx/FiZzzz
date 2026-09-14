@@ -158,13 +158,38 @@ There is also a prove harness that renders the same trees in real React 19.2 `re
 
 ---
 
-## Design choices
+## Why Zig, for real
 
-**Why Zig** Bytes should be bytes. No GC pause in the middle of a chunk, no hidden allocation. If you duplicate or free wrong it blows up right there. JS keeps the DOM walk, Zig keeps the bytes. Separate programs, same shape. When they match, you trust it.
+I tried this first in JS and kept getting fooled. Things looked correct but the runtime hid the cost. GC would pause between chunks, allocations were implicit, a string copy would happen somewhere I did not expect and the wire timing would shift just enough to hide a bug. When absorb versus reveal was off by one condition, JS still painted a fine page and I would not notice until the fuzzer ran for a long time.
 
-**Not a port** FiZz is not a line for line port of React. A port brings all the baggage and all the bugs. This is a rewrite of the idea. Each side owns its bugs, the wire is the contract.
+Zig makes that impossible to ignore. Bytes are bytes. There is no GC. Every allocation takes an allocator you pass in. If you want an arena for a request you create it, if you want to dupe a string you call dupe and you own the free. If you free wrong or dupe wrong it blows up right there, not later. That is what I wanted for a streaming protocol where order and lifetime are the whole correctness.
 
-**One document** No separate fetch for boundaries. One HTML document, chunked, with script tags. The browser can paint the shell immediately and fill holes as they arrive.
+A few things that mattered while learning this:
+
+* **Explicit lifetimes** A request owns segments and boundaries. In Zig the table owns the wakes, the dest owns the chunks, the request owns the table. Nothing dangles because nothing is shared behind a runtime. When a boundary completes, you can see exactly which buffer it writes to and whether dest is dead.
+* **No hidden control flow** No promises, no async scheduler, no microtask queue in the core. The sched table is just a table. `wake ok` saves html and finishes, `wake err` saves the error and fails. You call it, it runs, you see the wire change. Easy to trace with dump.
+* **Error unions over exceptions** `DupFlightId` is a real error you must handle where it happens. Not a throw that unwinds far away. Minted ids persist even after abort, so a remint after abort still errors at the call site. You see that rule in the code, not in a comment.
+* **Comptime and types for the wire** Escape, wrap, chunk framing, Flight push. All of it is checked at compile time and costs nothing at runtime. No helper you forgot to import, no runtime helper patching the chunk.
+* **If it matches React, you trust it** JS keeps the DOM walk for `$RC` and `$RX`. Zig keeps the bytes on the server. Two separate programs, same shape. When gen finds no counterexample and mutants all get caught and the dumped wire looks identical to `renderToPipeableStream`, you trust the bytes because Zig gave you no place to hide.
+
+I did not pick Zig to be clever. I picked it because I wanted the stream to be deterministic and the bugs to be loud. It did both.
+
+**Not a port** FiZz is not a line for line port of React. A port would bring Fiber, Scheduler, thenables, and all the baggage that makes the real codebase hard to learn. This is a rewrite of the idea from the spec. Each side owns its bugs. The wire is the contract. If FiZz makes `/` pretty and the oracle disagrees, the pretty reverts and the rule gets fixed.
+
+**One document** No separate fetch for boundaries. One HTML document, chunked, with Flight payloads riding in script tags. The browser paints the shell immediately and fills holes as they arrive. That is the whole performance story.
+
+## Where this maps in React core
+
+FiZz implements the same protocol as React 19.2. If you want to read the source that inspired each part, read these exact files in `facebook/react`:
+
+* `packages/react-server/src/ReactFizzServer.js` the core orchestrator. `createRequest` builds the request with destination and renderState, `renderNode` walks the tree, `Task` and `Segment` model work and output regions, `writeCompletedBoundaryInstruction` and `writeCompletedSegmentInstruction` emit `$RC` reveals. This is where absorb versus reveal lives.
+* `packages/react-dom/src/server/ReactDOMFizzServerNode.js` Node entry that wraps the core with `renderToPipeableStream`. Same for `ReactDOMFizzServerBrowser.js` and `ReactDOMFizzServerEdge.js` which wrap it with `renderToReadableStream`.
+* `packages/react-server/src/ReactFlightServer.js` the Flight side. `createRequest`, `startWork`, `startFlowing`, `abort`, plus `J` and `E` tag emit and ref handling for `$` and `$@`.
+* `packages/react-server/src/ReactFizzConfigDOM.js` and `packages/react-dom-bindings/src/server/ReactFizzConfigDOM.js` format config. `pushStartInstance`, `pushEndInstance`, `pushTextInstance`, `writePlaceholder`, `writeStartSegment`, `writeEndSegment`, and the suspense comment markers `<!--$-->`, `<!--$?-->`, `<!--$!-->`, `<!--/$-->`.
+* `packages/react-server/src/ReactServerStreamConfig*.js` stream configs for Node, Browser, Edge, Bun. Chunk type, destination write, scheduleWork and scheduleMicrotask.
+* `packages/react-client/src/ReactFlightClient.js` and `ReactDOMClient` hydration path, client side `$RC` splice walk and `$RX` error paint, `__F.get` pending slots and `console.error` on dup.
+
+Read those alongside `SPEC.md` in this repo. The spec is the distilled version of exactly those files. When in doubt, the React file is the truth.
 
 ---
 
