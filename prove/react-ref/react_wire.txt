@@ -1,0 +1,33 @@
+===== A-inline-vs-outline len=121 =====
+<table><tbody><!--$--><tr class="row"><td class="leg">tiny</td><td class="wake">$14.10</td></tr><!--/$--></tbody></table>
+
+===== B-parent-first-late-child len=695 =====
+<table><tbody><tr><td>shell</td></tr><!--$?--><template id="B:0"></template><tr class="loading"><td colSpan="2">waiting…</td></tr><!--/$--></tbody></table><script>requestAnimationFrame(function(){$RT=performance.now()});</script>[onError:abort]<script>$RX=function(b,c,d,e,f){var a=document.getElementById(b);a&&(b=a.previousSibling,b.data="$!",a=a.dataset,c&&(a.dgst=c),d&&(a.msg=d),e&&(a.stck=e),f&&(a.cstck=f),b._reactRetry&&b._reactRetry())};;$RX("B:0","","Switched to client rendering because the server rendering aborted due to:\n\nabort","","\n    at Never (\u003canonymous>)\n    at Suspense (\u003canonymous>)\n    at tbody (\u003canonymous>)\n    at table (\u003canonymous>)")</script>
+
+===== C-error-shape len=1919 =====
+[onError:kablam <&>]<table><tbody><!--$!--><template data-msg="Switched to client rendering because the server rendering errored:
+
+kablam &lt;&amp;&gt;" data-stck="Switched to client rendering because the server rendering errored:
+
+Error: kablam &lt;&amp;&gt;
+    at Boom (file:///C:/Users/jayad/fizz/ooo-desk/prove/react-ref/cases.mjs:54:30)
+    at Object.react_stack_bottom_frame (C:\Users\jayad\fizz\ooo-desk\prove\react-ref\node_modules\react-dom\cjs\react-dom-server.node.development.js:10288:18)
+    at renderWithHooks (C:\Users\jayad\fizz\ooo-desk\prove\react-ref\node_modules\react-dom\cjs\react-dom-server.node.development.js:5298:19)
+    at renderElement (C:\Users\jayad\fizz\ooo-desk\prove\react-ref\node_modules\react-dom\cjs\react-dom-server.node.development.js:5733:23)
+    at retryNode (C:\Users\jayad\fizz\ooo-desk\prove\react-ref\node_modules\react-dom\cjs\react-dom-server.node.development.js:6664:31)
+    at renderNodeDestructive (C:\Users\jayad\fizz\ooo-desk\prove\react-ref\node_modules\react-dom\cjs\react-dom-server.node.development.js:6614:11)
+    at renderNode (C:\Users\jayad\fizz\ooo-desk\prove\react-ref\node_modules\react-dom\cjs\react-dom-server.node.development.js:7152:18)
+    at renderElement (C:\Users\jayad\fizz\ooo-desk\prove\react-ref\node_modules\react-dom\cjs\react-dom-server.node.development.js:6158:22)
+    at retryNode (C:\Users\jayad\fizz\ooo-desk\prove\react-ref\node_modules\react-dom\cjs\react-dom-server.node.development.js:6664:31)
+    at renderNodeDestructive (C:\Users\jayad\fizz\ooo-desk\prove\react-ref\node_modules\react-dom\cjs\react-dom-server.node.development.js:6614:11)" data-cstck="
+    at Boom (file:///C:/Users/jayad/fizz/ooo-desk/prove/react-ref/cases.mjs:54:30)
+    at Suspense (&lt;anonymous&gt;)
+    at tbody (&lt;anonymous&gt;)
+    at table (&lt;anonymous&gt;)"></template><tr class="loading"><td colSpan="2">waiting…</td></tr><!--/$--></tbody></table>
+
+===== D-abort-queued len=678 =====
+<table><tbody><!--$?--><template id="B:0"></template><tr class="loading"><td colSpan="2">waiting…</td></tr><!--/$--></tbody></table><script>requestAnimationFrame(function(){$RT=performance.now()});</script>[onError:aborted!]<script>$RX=function(b,c,d,e,f){var a=document.getElementById(b);a&&(b=a.previousSibling,b.data="$!",a=a.dataset,c&&(a.dgst=c),d&&(a.msg=d),e&&(a.stck=e),f&&(a.cstck=f),b._reactRetry&&b._reactRetry())};;$RX("B:0","","Switched to client rendering because the server rendering aborted due to:\n\naborted!","","\n    at Never (\u003canonymous>)\n    at Suspense (\u003canonymous>)\n    at tbody (\u003canonymous>)\n    at table (\u003canonymous>)")</script>
+
+===== E-nested-ids len=139 =====
+<table><tbody><!--$--><!--$--><tr class="row"><td class="leg">inner</td><td class="wake">$14.10</td></tr><!--/$--><!--/$--></tbody></table>
+
