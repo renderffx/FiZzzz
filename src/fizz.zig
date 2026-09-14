@@ -10,6 +10,10 @@ pub const Segment = types_mod.Segment;
 pub const Boundary = types_mod.Boundary;
 pub const Req = req_mod.Req;
 pub const Flags = mutants_mod.Flags;
+const snap_mod = @import("./fizz/snap.zig");
+pub const Snap = snap_mod.Snap;
+pub const capture = snap_mod.capture;
+pub const resumeReq = snap_mod.resumeReq;
 pub fn resetMutants() void {
     mutants_mod.resetMutants();
 }

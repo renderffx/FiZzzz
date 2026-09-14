@@ -25,6 +25,7 @@ pub fn build(b: *std.Build) void {
     fizz.addImport("html", html);
 
     const blotter = srcMod(b, "src/blotter.zig", target, optimize);
+    blotter.addImport("dest", dest);
     blotter.addImport("fizz", fizz);
     blotter.addImport("flight", flight);
     blotter.addImport("html", html);
@@ -64,6 +65,7 @@ pub fn build(b: *std.Build) void {
     gen_mod.addImport("fizz", fizz);
     gen_mod.addImport("flight", flight);
     gen_mod.addImport("sched", sched);
+    gen_mod.addImport("blotter", blotter);
     gen_mod.addImport("oracle", oracle);
     gen_mod.addImport("parse_wire", parse_wire);
     const gen_exe = b.addExecutable(.{

@@ -1,4 +1,5 @@
 const std = @import("std");
+const Dest = @import("dest").Dest;
 const fizz = @import("fizz");
 const sched = @import("sched");
 const tape = @import("tape");
@@ -59,6 +60,11 @@ pub const Scene = struct {
         return sc;
     }
 
+    pub fn captureShell(alloc: std.mem.Allocator, sc: Scene) !fizz.Snap {
+        sc.req.flushRoot(0);
+        return fizz.capture(alloc, sc.req);
+    }
+
     pub fn run(self: *Scene, alloc: std.mem.Allocator) void {
         const order = tape.buildOrder(alloc);
         defer alloc.free(order);
@@ -68,5 +74,11 @@ pub const Scene = struct {
         while (i < order.len) : (i += 1) {
             if (!@import("./terms.zig").applyTerm(self, alloc, order[i])) break;
         }
+    }
+
+    pub fn runResume(self: *Scene, alloc: std.mem.Allocator) void {
+        const order = tape.buildOrder(alloc);
+        defer alloc.free(order);
+        for (order) |t| if (!@import("./terms.zig").applyTerm(self, alloc, t)) break;
     }
 };
